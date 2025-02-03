@@ -1,5 +1,7 @@
 export default class Canvas {
     constructor(canvas, width, height) {
+        this.renders = []
+
         this.canvas = canvas;
         this.context = canvas.getContext('2d');
 
@@ -28,14 +30,15 @@ export default class Canvas {
             }
         }
         this.context.fill();
+        this.renders.push(Date.now())
     }
 
     drawLoop(render) {
-        console.log('drawLoop')
-        this.drawGrid()
+        console.debug('drawLoop')
         render()
+        this.drawGrid()
         setTimeout(() =>
             requestAnimationFrame(() => this.drawLoop(render))
-        , 10)
+        , 15)
     }
 }

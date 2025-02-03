@@ -51,14 +51,19 @@ const wallDistance = (player, angle) => {
     return Infinity
 }
 
-const render = (FOV = Math.PI / 3) => {
+const render = () => {
     for (let x = 0; x < canvasWidth; x++) {
-        const angle = getAngle(x, canvasWidth, FOV)
+        const angle = getAngle(x, canvasWidth)
         const height = canvasHeight / wallDistance(player, angle)
+
+        const heightMin = canvasHeight * .5 - height
+        const heightMax = canvasHeight * .5 + height
+
         for (let y = 0; y < canvasHeight; y++) {
-            canvas.set(x, y, '#000');
-            if (y > (canvasHeight / 2) - height && y < (canvasHeight / 2) + height)
-                canvas.set(x, y, '#fff');
+            if (y < heightMin || y > heightMax)
+                canvas.set(x, y, 'black')
+            else
+                canvas.set(x, y, 'white')
         }
     }
 }
