@@ -1,4 +1,4 @@
-export class Point {
+export default class Point {
     constructor(x, y, angle) {
         this.x = x;
         this.y = y;
@@ -8,6 +8,7 @@ export class Point {
     advance(d) {
         this.x += Math.cos(this.angle) * d;
         this.y += Math.sin(this.angle) * d;
+        return this
     }
 
     distance(point) {

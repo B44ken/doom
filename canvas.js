@@ -1,4 +1,4 @@
-export class Canvas {
+export default class Canvas {
     constructor(canvas, width, height) {
         this.canvas = canvas;
         this.context = canvas.getContext('2d');
@@ -36,16 +36,6 @@ export class Canvas {
         render()
         setTimeout(() =>
             requestAnimationFrame(() => this.drawLoop(render))
-            , 50)
-    }
-
-    drawLoop(render) {
-        render()
-        this.drawGrid();
-        setTimeout(() => {
-            requestAnimationFrame(() =>
-                this.drawLoop(render)
-            )
-        }, 30)
+        , 10)
     }
 }

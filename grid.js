@@ -1,6 +1,5 @@
-class Grid {
+export default class Grid {
     constructor(x, y) {
-        // this.grid = Array.from({ length: y }, () => Array.from({ length: x }, () => 0))
         this.grid = Array(y).fill().map(() => Array(x).fill(' '))
         this.size = [x, y]
     }
@@ -14,7 +13,7 @@ class Grid {
         if (x < 0 || x >= this.size[0] || y < 0 || y >= this.size[1])
             return 0
         
-        return this.grid[Math.round(y)][Math.round(x)]
+        return this.grid[Math.floor(y)][Math.floor(x)]
     }
 
     set(x, y, value) {
@@ -36,5 +35,3 @@ class Grid {
         return grid
     }
 }
-
-export { Grid }
