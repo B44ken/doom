@@ -1,0 +1,16 @@
+{
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "stopAtEntry": false,
+      "externalConsole": false,
+      "cwd": "/home/brad/code/gloom/cpp",
+      "program": "/home/brad/code/gloom/cpp/gloom",
+      "MIMode": "gdb",
+      "preLaunchTask": "build",
+      "setupCommands": [{ "text": "-enable-pretty-printing" }]
+    }
+  ]
+}

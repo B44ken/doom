@@ -1,32 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>gloom</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f0f0f0;
-        }
-        canvas {
-            border: 1px solid #000;
-            width: 800px;
-            max-width: 95%;
-            max-height: 95%;
-            aspect-ratio: 16 / 9;
-            image-rendering: pixelated;
-        }
-    </style>
+	<script src='https://cdn.jsdelivr.net/npm/marked/marked.min.js'></script>
+	<style>
+		body {
+			width: 600px;
+			max-width: calc(100vw - 80px);
+			margin: 20px auto;
+			font: 20px roboto, sans-serif;
+			background: #111;
+			color: #eee;
+			@media (orientation: portrait) {
+				font-size: 30px;
+				width: 100vw;
+			}
+		}
+
+		pre, a {
+			color: inherit;
+			font: inherit;
+		}
+
+		code {
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			padding: 0 2px;
+		}
+
+		details:not(.show), #hide {
+			display: none;
+		}
+
+	</style>
 </head>
+
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <script src="main.js" defer type="module"></script>
+	<h1> doom in 1 hour stuff </h1>
+
+    <a href="https://github.com/b44ken/gloom">github</a>
 </body>
-</html>
