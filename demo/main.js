@@ -1,91 +1,92 @@
-import Canvas from "./canvas.js"
-import Grid from "./grid.js"
-import Point from "./point.js"
-import Keyboard from "./input.js"
+// import { drawLoop, setPixel } from "./canvas.js"
+// import { getMap } from "./grid.js"
+// import { point, advance, distance } from "./point.js"
+// import { pressed  } from "./input.js"
 
-const canvasWidth = 400
-const canvasHeight = Math.round(canvasWidth * 9 / 16)
-const canvas = new Canvas(document.querySelector('canvas'), canvasWidth, canvasHeight)
+import { canvasWidth, canvasHeight, drawLoop, setPixel, setPixel32, getMap, point, advance, distance, keys } from "./utils.js"
 
-const keysDown = new Keyboard()
-const player = new Point(3, 3, 0)
-const map = Grid.fromString(`
-@@@@@@@@@@@@@@@@@
-@          @    @
-@          @    @
-@   +      @    @
-@          @@  @@
-@               @
-@   @@     @    @
-@   @@@    @    @
-@   @@     @    @
-@          @    @
-@@@@@@@@@@@@@@@@@
-`.trim())
+let player = point(3, 3, 0)
 
 setInterval(() => {
     const step = (dist) => {
-        player.advance(dist)
-        if (map.get(player.x, player.y) != ' ')
-            player.advance(-dist)
+        advance(player, dist)
+        if (getMap(player.x, player.y) != ' ')
+            advance(player, -dist)
     }
-    if (keysDown.pressed('w'))
-        step(0.05)
-    if (keysDown.pressed('s'))
-        step(-0.05)
-    if (keysDown.pressed('a'))
-        player.angle -= 0.02
-    if (keysDown.pressed('d'))
-        player.angle += 0.02
+    if (keys['w']) step(0.05)
+    if (keys['s']) step(-0.05)
+    if (keys['a']) player.angle -= 0.02
+    if (keys['d']) player.angle += 0.02
+    if (keys[' ']) shoot()
 }, 10)
 
-const getAngle = (x, width, FOV = Math.PI / 3) =>
-    player.angle - FOV / 2 + x * FOV / width
-
 const raycast = (pos, angle) => {
-    const ray = new Point(pos.x, pos.y, angle);
-    while (map.get(ray.x, ray.y) == ' ') {
-        ray.advance(0.05);
-        if (pos.distance(ray) > 15)
-            return null;
+    let ray = point(pos.x, pos.y, angle);
+    while (getMap(ray.x, ray.y) == ' ') {
+        advance(ray, 0.05)
+        for(const enemy of enemies)
+            if(distance(ray, enemy.point) < 0.25 && enemy.alive)
+                return { ray, enemy };
+        if (distance(pos, ray) > 15)
+            return null
     }
-    return ray;
+    return { ray, wall: getMap(ray.x, ray.y) };
 }
 
-const getSlice = (x) => {
-    const ray = raycast(player, getAngle(x, canvasWidth));
-    const distance = ray ? player.distance(ray) : 10000;
-    const height = Math.atan(2 / distance) * canvasHeight;
-
-    const fade = 255 - (distance * 20)
-    const color = fade
-
-    return { color, height }
+const shoot = () => {
+    const { enemy } = raycast(player, player.angle)
+    if(enemy?.alive)
+        enemy.alive = false
 }
+
+const getSlice = (x, FOV = Math.PI / 3) => {
+    const angle = player.angle - FOV / 2 + x * FOV / canvasWidth;
+    const cast = raycast(player, angle)
+    if(!cast?.ray)
+        return { color: null, height: 0 }
+    const d = distance(player, cast.ray)
+    if(cast.enemy)
+        return {
+            color: [255, 0, 0],
+            height: Math.atan(2 / d) * canvasHeight
+        }
+    const val = 255 - d * 10
+    if(cast.wall)
+        return {
+            color: [val, val, val],
+            height: Math.atan(2 / d) * canvasHeight
+        }
+    else
+        return {
+            color: [0, 0, 0],
+            height: 0
+        }
+}
+
+const enemies = [
+    { point: point(6, 6, 0), alive: true },
+    { point: point(20, 10, 0), alive: true },
+]
 
 function render() {
     const slices = []
     for(let x = 0; x < canvasWidth; x++) {
-        slices.push((getSlice(x).height / canvasHeight).toPrecision(3))
+        slices.push((getSlice(x).height / canvasHeight))
         const { color, height } = getSlice(x);
 
         let minHeight = canvasHeight / 2 - height / 2;
         let maxHeight = canvasHeight / 2 + height / 2;
 
         for(let y = 0; y < canvasHeight; y++) {
+            if(y < minHeight)
+                setPixel32(x, y, 0xaaeeffff)
             if(y > minHeight && y < maxHeight)
-                canvas.set(x, y, color)
-            else if (y < canvasHeight / 2)
-                canvas.set(x, y, 255)
-            else
-                canvas.set(x, y, 128)
+                setPixel(x, y, color)
+            if(y > maxHeight)
+                setPixel32(x, y, 0x777777ff)
         }
     }
     return slices;
 }
 
-const slices = render()
-console.log(`float slices[${slices.length}] = (${slices.join(',')})`)
-
-
-canvas.drawLoop(render)
+drawLoop(render)

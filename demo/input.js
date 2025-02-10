@@ -1,13 +1,6 @@
-export default class Keyboard {
-    constructor() {
-        this.keysDown = new Set()
-        document.addEventListener('keydown', (event) =>
-            this.keysDown.add(event.key))
-        document.addEventListener('keyup', (event) =>
-            this.keysDown.delete(event.key))
-    }
+const keys = {}
 
-    pressed(key) {
-        return this.keysDown.has(key)
-    }
-}
+document.addEventListener('keydown', ({ key }) => keys[key] = true)
+document.addEventListener('keyup', ({ key }) => keys[key] = false)
+
+export const pressed = k => (keys[k] == true)

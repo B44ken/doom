@@ -1,17 +1,8 @@
-export default class Point {
-    constructor(x, y, angle) {
-        this.x = x;
-        this.y = y;
-        this.angle = angle;
-    }
+export const point = (x = 0, y = 0, angle = 0) => ({ x, y, angle })
 
-    advance(d) {
-        this.x += Math.cos(this.angle) * d;
-        this.y += Math.sin(this.angle) * d;
-        return this
-    }
-
-    distance(point) {
-        return Math.sqrt((this.x - point.x) ** 2 + (this.y - point.y) ** 2);
-    }
+export const advance = (p, d) => {
+    p.x += Math.cos(p.angle) * d
+    p.y += Math.sin(p.angle) * d
 }
+
+export const distance = (p1, p2) => Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
